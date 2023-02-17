@@ -1,0 +1,39 @@
+body {
+    height: 100vh;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 50px;
+  }
+  
+  .set-num{
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px;
+  }
+  
+  .grid-cell {
+    background-color: #ccc;
+    border: 1px solid black;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .mark {
+    border: 1px solid #eee;
+  }
+  
+  .mark > img {
+    position: absolute;
+    transition: all 0.5s;
+  }
+  
+  .has-child img{
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .green {
+    border-color: green;
+    background-color: lightgreen;
+  }
+  
+  .not-available-move{
+    border-color: red;
+    background-color: red;
+  }
+  
