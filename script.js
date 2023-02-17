@@ -3,34 +3,43 @@ const fieldHeight = "117px";
 const imageWidth = "100px";
 const imageHeight = "98px";
 
+const sqInput = document.getElementById("my-input");
+const setNum = document.querySelector('.set-num');
+const setButton = document.querySelector('.send-input');
+const grid = document.querySelector(".grid");
+const resetButton = document.getElementById('reset-button');
+const reset = document.getElementById('reset');
 
-
-let sqInput = document.getElementById("my-input");
-let setNum = document.querySelector('.set-num');
-let button = document.querySelector('.send-input');
 let fields;
 let fieldsArr;
 let isMarkedElement = false;
 let markedField = false;
-let iterator;
-let elementCordX, elementCordY;
-let targetCordX, targetCordY;
 let length = sqInput.value;
 let gridSize;
-let grid = document.querySelector(".grid");
 let rowBorders = [];
+let sq;
+let board = [];
+let graph = {};
+var addedGridCells = [];
+
+
+
+grid.style.gridTemplateColumns = `repeat(${length}, 1fr)`;
+grid.style.gridTemplateRows = `repeat(${length}, 1fr)`;
 
 sqInput.addEventListener('change', (e) => {
   length = e.target.value;
   grid.style.gridTemplateColumns = `repeat(${length}, 1fr)`;
   grid.style.gridTemplateRows = `repeat(${length}, 1fr)`;
-  button.removeAttribute('disabled');
+  if(length > 2){
+  setButton.removeAttribute('disabled');
+  }
+  else{
+    setButton.setAttribute('disabled', 'disabled')
+  }
 });
 
-
-
-
-button.addEventListener('click', ()=>{
+setButton.addEventListener('click', ()=> {
   gridSize = parseInt(length)
   sq = gridSize * gridSize;
   console.log(gridSize)
@@ -44,47 +53,30 @@ button.addEventListener('click', ()=>{
     grid.appendChild(div);
     board[i] = 0;
   }
-  
   let marker = gridSize - 1;
   for (let i = 0; i < sq; i++) {
     if (i % gridSize == marker || i % gridSize === 0) {
       rowBorders.push(i);
     }
-    // else if(){
-    //   rowBorders.push(i);
-    // }
   }
-    
-  
   fields = document.querySelectorAll(".grid-cell");
   fieldsArr = Array.from(fields);
   startGame();
   setNum.style.display = 'none';
+  reset.style.display = 'block';
   click();
 })
 
-let sq;
 
-
-
-let board = [
-  // [],
-  // [],
-  // [],
-  // []
-];
-
-let graph = {};
-
-
-
-// let red = document.querySelectorAll(".grid-cell.red");
-
-
-
-var addedGridCells = [];
-
-
+resetButton.addEventListener('click', () => {
+  const gridCells = document.querySelectorAll('.grid-cell');
+  gridCells.forEach((cell, index) => {
+    cell.classList.remove('mark', 'green', 'not-available-move', 'has-child');
+    cell.innerHTML = '';
+    board[index] = 0;
+  });
+  addRandomElements(5)
+});
 
 
 
@@ -92,15 +84,12 @@ function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function addRandomElements(){
-
-  for (var i = 0; i < 1; i++) {
+function addRandomElements(items){
+  for (var i = 0; i < items; i++) {
     var randomIndex = getRandomNumber(0, fields.length - 1);
-
     while (board[randomIndex]!== 0) {
       randomIndex = getRandomNumber(0, fields.length - 1)
     }
-
     var randomGridCell = fields[randomIndex];
     var childElement = document.createElement("img");
     childElement.src = "images/monster.png";
@@ -115,29 +104,10 @@ function addRandomElements(){
   addedGridCells = []
 }
 
-
 function startGame() {
-  for (var i = 0; i < 5; i++) {
-    var randomIndex = getRandomNumber(0, fields.length - 1);
-
-    while (board[randomIndex]!== 0) {
-      randomIndex = getRandomNumber(0, fields.length - 1);
-    }
-
-    var randomGridCell = fields[randomIndex];
-    var childElement = document.createElement("img");
-    childElement.src = "images/monster.png";
-    childElement.style.width = imageWidth;
-    childElement.style.height = imageHeight;
-    randomGridCell.appendChild(childElement);
-    randomGridCell.classList.add("has-child");
-    addedGridCells.push(randomIndex);
-    board[randomIndex] = 1;
-  }
+  addRandomElements(5)
   addedGridCells = []
 }
-
-
 
 function addImg(el) {
   var img = document.createElement("img");
@@ -202,8 +172,7 @@ function setTarget() {
             let ziom = checkRows(board);
             if(!ziom){
               console.log(ziom)
-              setTimeout(addRandomElements, 1000)
-              
+              setTimeout(addRandomElements(1), 1000)
               }
           }
       }
@@ -212,14 +181,10 @@ function setTarget() {
   );
 }
 
-
-
 function checkRows(arr) {
   let helperArr = []
-  
+
   for (let i = 0; i < arr.length - 2; i++) {
-
-
     if (i < arr.length - gridSize + 1 && arr[i] === 1 && arr[i + 1] === 1 && arr[i + 2] === 1) {
       if(gridSize >= 5){
       if( arr[i + 3] === 1 && arr[i + 4] === 1 && i % gridSize < gridSize - 4){
@@ -229,8 +194,7 @@ function checkRows(arr) {
         clearFields(fieldsArr[i + 2]);
         clearFields(fieldsArr[i + 3]);
         clearFields(fieldsArr[i + 4]);
-        return true;
-        
+        return true;   
       }
       if(arr[i + 3] === 1 && i % gridSize < gridSize - 3){
         console.log('czworka w piatce');
@@ -271,39 +235,7 @@ function checkRows(arr) {
           clearFields(fieldsArr[i + 2]);
           return true;
       }
-
     }
-      // else if(gridSize === 4){
-
-      // }
-      // else{
-
-      // }
-    //   if(i % gridSize !== 0 || helperArr.includes(i)){
-    //     continue
-    //   }
-    //   else{
-        
-    //   clearFields(fieldsArr[i]);
-    //   clearFields(fieldsArr[i + 1]);
-    //   clearFields(fieldsArr[i + 2]);
-    //   clearFields(fieldsArr[i + 3]);
-    //   return true;
-    //   }
-    // }
-
-    // if (arr[i] === 1 && arr[i + 1] === 1 && arr[i + 2] === 1) {
-    //   console.log('wchodze do ifa potrojnego')
-    //   if (helperArr.includes(i)) {
-    //     continue;
-    //   } else {
-    //     console.log('else w potrojnym')
-    //     clearFields(fieldsArr[i]);
-    //     clearFields(fieldsArr[i + 1]);
-    //     clearFields(fieldsArr[i + 2]);
-    //     return true;
-    //   }
-    // }
   }
   return false;
 }
@@ -466,7 +398,6 @@ function checkNeighbours(index) {
       }
     }
   }
-
   if (noMoves) {
     if (isMarkedElement) {
       markedField = false;
@@ -483,35 +414,7 @@ function checkNeighbours(index) {
   }
 }
 
-
-
 function makeGraph() {
-  // for (let i = 0; i < board.length; i++) {
-  //   graph[i] = { value: board[i], connections: [] };
-  //   if (board[i] === 0) {
-  //   //   console.log(`${i} and my neighbours`);
-  //     if (i > 0 && board[i - 1] === 0) {
-  //       if ((i - 1) % 4 !== 3) {
-  //         graph[i].connections.push(i - 1);
-  //       }
-  //       // console.log('first if')
-  //     }
-  //     if (i < board.length - 1 && board[i + 1] === 0) {
-  //       if ((i + 1) % 4 !== 0) {
-  //         graph[i].connections.push(i + 1);
-  //       }
-  //       // console.log('second if')
-  //     }
-  //     if (i > 3 && board[i - 4] === 0) {
-  //       graph[i].connections.push(i - 4);
-  //       // console.log('third if')
-  //     }
-  //     if (i < board.length - 4 && board[i + 4] === 0) {
-  //       graph[i].connections.push(i + 4);
-  //       // console.log('fourth if')
-  //     }
-  //   }
-  // }
     for (let i = 0; i < board.length; i++) {
     graph[i] = { value: board[i], connections: [] };
     if (board[i] === 0) {
@@ -534,19 +437,12 @@ function makeGraph() {
 }
 
 function breadthFirstSearch(graph, start, end) {
-  console.log(`start : ${start}`);
   let queue = [];
   queue.push(start);
-  console.log("Queue :");
-  console.log(queue);
-
   let parents = {};
   parents[start] = null;
-
   while (queue.length > 0) {
-
     let current = queue.shift();
-
     if (current === end) {
       break;
     }
@@ -558,14 +454,12 @@ function breadthFirstSearch(graph, start, end) {
       }
     }
   }
-
   if (!parents.hasOwnProperty(end)) {
     console.log("Didn't find the path");
     return null;
   }
 
   let path = [];
-
   let current = end;
   while (current !== null) {
     path.unshift(current);
