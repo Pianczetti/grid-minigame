@@ -1,14 +1,15 @@
 const fieldWidth = "240px";
 const fieldHeight = "117px";
-const imageWidth = "100px";
-const imageHeight = "98px";
+const imageWidth = "auto";
+const imageHeight = "auto";
 
 const sqInput = document.getElementById("my-input");
 const setNum = document.querySelector('.set-num');
-const setButton = document.querySelector('.send-input');
+const setButton = document.querySelector('.set-btn');
 const grid = document.querySelector(".grid");
 const resetButton = document.getElementById('reset-button');
 const reset = document.getElementById('reset');
+const isZero = (currentValue) => currentValue === 0;
 
 let fields;
 let fieldsArr;
@@ -64,13 +65,20 @@ setButton.addEventListener('click', ()=> {
   startGame();
   setNum.style.display = 'none';
   reset.style.display = 'block';
+  grid.style.display = 'grid';
+
   click();
+  setTarget();
 })
 
 
 resetButton.addEventListener('click', () => {
-  const gridCells = document.querySelectorAll('.grid-cell');
-  gridCells.forEach((cell, index) => {
+    rowBorders = [];
+    graph = {};
+    addedGridCells = [];
+    isMarkedElement = false;
+    markedField = false;
+    fields.forEach((cell, index) => {
     cell.classList.remove('mark', 'green', 'not-available-move', 'has-child');
     cell.innerHTML = '';
     board[index] = 0;
@@ -78,11 +86,6 @@ resetButton.addEventListener('click', () => {
   addRandomElements(5)
 });
 
-
-
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
 
 function addRandomElements(items){
   for (var i = 0; i < items; i++) {
@@ -104,9 +107,14 @@ function addRandomElements(items){
   addedGridCells = []
 }
 
+function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+
 function startGame() {
+  // addElementsOnStart
   addRandomElements(5)
-  addedGridCells = []
 }
 
 function addImg(el) {
@@ -145,10 +153,10 @@ if(fields){
           board[index] = 0;
           isMarkedElement = true;
           checkNeighbours(index);
-          setTarget();
         }
       }
       flag = false;
+
     })
   );
 }
@@ -156,7 +164,7 @@ if(fields){
 
 function setTarget() {
     let flag = false;
-  fieldsArr.forEach((el, id) =>
+    fieldsArr.forEach((el, id) =>
     el.addEventListener("click", () => {
         if(flag) return;
         flag = true;
@@ -167,12 +175,26 @@ function setTarget() {
       ) {
         el.classList.add("green");
         markedField = true;
-        let dupa = go();
-        if(dupa){
+        let moved = go();
+        if(moved){
             let ziom = checkRows(board);
             if(!ziom){
               console.log(ziom)
               setTimeout(addRandomElements(1), 1000)
+              }
+              else{
+                setTimeout(() => { 
+                  if(board.every(isZero)) { 
+                    alert("No more moves"); 
+                    grid.style.display = 'none';
+                    while (grid.firstChild) {
+                      grid.removeChild(grid.lastChild);
+                    }
+                    reset.style.display = 'none';
+                    setNum.style.display = 'flex';
+                  } 
+                }, 0)
+                
               }
           }
       }
@@ -185,7 +207,7 @@ function checkRows(arr) {
   let helperArr = []
 
   for (let i = 0; i < arr.length - 2; i++) {
-    if (i < arr.length - gridSize + 1 && arr[i] === 1 && arr[i + 1] === 1 && arr[i + 2] === 1) {
+    if (i <= arr.length - gridSize + 1 && arr[i] === 1 && arr[i + 1] === 1 && arr[i + 2] === 1) {
       if(gridSize >= 5){
       if( arr[i + 3] === 1 && arr[i + 4] === 1 && i % gridSize < gridSize - 4){
         console.log('jestem w piatce');
@@ -212,7 +234,7 @@ function checkRows(arr) {
         return true;
       }
     }
-      if(gridSize == 4)
+      if(gridSize === 4)
       {
         if (arr[i + 3] === 1 && i % gridSize == 0){
         console.log('czworka');
@@ -222,7 +244,8 @@ function checkRows(arr) {
         clearFields(fieldsArr[i + 3]);
           return true;
         }
-        if(i % gridSize < gridSize - 2){
+        if(arr[i+2] === 1 && i % gridSize < gridSize - 2){
+          console.log('===============')
           clearFields(fieldsArr[i]);
           clearFields(fieldsArr[i + 1]);
           clearFields(fieldsArr[i + 2]);
@@ -314,10 +337,10 @@ function checkNeighbours(index) {
   let helperArr = Array.from({length: gridSize - 2}, (_, index) => index + 1);
   console.log(`helper Arr: ${helperArr}`)
   if (
-    (fieldsArr[index - 1] && fieldsArr[index - 1].classList.contains("mark")) ||
-    (fieldsArr[index - gridSize] && fieldsArr[index - gridSize].classList.contains("mark")) ||
-    (fieldsArr[index + gridSize] && fieldsArr[index + gridSize].classList.contains("mark")) ||
-    (fieldsArr[index + 1] && fieldsArr[index + 1].classList.contains("mark"))
+    (fieldsArr[index - 1]?.classList.contains("mark")) ||
+    (fieldsArr[index - gridSize]?.classList.contains("mark")) ||
+    (fieldsArr[index + gridSize]?.classList.contains("mark")) ||
+    (fieldsArr[index + 1]?.classList.contains("mark"))
   ) {
     return;
   }
@@ -414,6 +437,7 @@ function checkNeighbours(index) {
   }
 }
 
+
 function makeGraph() {
     for (let i = 0; i < board.length; i++) {
     graph[i] = { value: board[i], connections: [] };
@@ -468,3 +492,19 @@ function breadthFirstSearch(graph, start, end) {
   console.log(`Path : ${path}`);
   return path;
 }
+
+
+
+// function resetGame() {
+//   const gridCells = document.querySelectorAll('.grid-cell');
+//   gridCells.forEach((cell) => {
+//     cell.classList.remove('mark', 'green', 'not-available-move', 'has-child');
+//     cell.innerHTML = '';
+//   });
+//   board = [];
+//   rowBorders = [];
+//   graph = {};
+//   addedGridCells = [];
+//   isMarkedElement = false;
+//   markedField = false;
+// }
