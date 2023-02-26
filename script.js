@@ -34,12 +34,12 @@ sqInput.addEventListener('change', (e) => {
   grid.style.gridTemplateColumns = `repeat(${length}, 1fr)`;
   grid.style.gridTemplateRows = `repeat(${length}, 1fr)`;
 
-  if(e.target.value > 2)
+  if(length > 2 && length < 11)
   {sizeLabel.innerHTML = `The size of grid: ${e.target.value}x${e.target.value}`}
   else
   {sizeLabel.innerHTML = `Set the size of grid`}
 
-  if(length > 2){
+  if(length > 2 && length < 11){
   setButton.removeAttribute('disabled');
   }
   else{
