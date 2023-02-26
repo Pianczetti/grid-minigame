@@ -9,6 +9,7 @@ const setButton = document.querySelector('.set-btn');
 const grid = document.querySelector(".grid");
 const resetButton = document.getElementById('reset-button');
 const reset = document.getElementById('reset');
+const sizeLabel = document.getElementById('size-label');
 const isZero = (currentValue) => currentValue === 0;
 
 let fields;
@@ -32,6 +33,12 @@ sqInput.addEventListener('change', (e) => {
   length = e.target.value;
   grid.style.gridTemplateColumns = `repeat(${length}, 1fr)`;
   grid.style.gridTemplateRows = `repeat(${length}, 1fr)`;
+
+  if(e.target.value > 2)
+  {sizeLabel.innerHTML = `The size of grid: ${e.target.value}x${e.target.value}`}
+  else
+  {sizeLabel.innerHTML = `Set the size of grid`}
+
   if(length > 2){
   setButton.removeAttribute('disabled');
   }
