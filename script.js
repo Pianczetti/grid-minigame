@@ -214,7 +214,7 @@ function checkRows(arr) {
   let helperArr = []
 
   for (let i = 0; i < arr.length - 2; i++) {
-    if (i <= arr.length - gridSize + 1 && arr[i] === 1 && arr[i + 1] === 1 && arr[i + 2] === 1) {
+    if (i <= arr.length - gridSize + 2 && arr[i] === 1 && arr[i + 1] === 1 && arr[i + 2] === 1) {
       if(gridSize >= 5){
       if( arr[i + 3] === 1 && arr[i + 4] === 1 && i % gridSize < gridSize - 4){
         console.log('jestem w piatce');
@@ -233,7 +233,7 @@ function checkRows(arr) {
         clearFields(fieldsArr[i + 3]);
         return true;
       }
-      if(i%gridSize < gridSize - 2)
+      if(arr[i+2] === 1 && i % gridSize < gridSize - 2)
       {
         clearFields(fieldsArr[i]);
         clearFields(fieldsArr[i + 1]);
@@ -259,7 +259,7 @@ function checkRows(arr) {
           return true;
         }
       }
-      if(gridSize == 3 && i%gridSize ==0){
+      if(gridSize == 3 && i % gridSize == 0){
           clearFields(fieldsArr[i]);
           clearFields(fieldsArr[i + 1]);
           clearFields(fieldsArr[i + 2]);
