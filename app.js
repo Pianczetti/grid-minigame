@@ -35,7 +35,7 @@ app.get('/', function(req, res) {
 });
 
 app.post('/add-score', function(req, res) {
-  con.query('INSERT INTO `scores`(`nick`, `score`) VALUES("'+req.body.nick+'", '+req.body.score+')', function (error, results, fields) {
+  con.query('INSERT INTO `scores`(`nick`, `score`) VALUES("'+req.body.nick+'", '+req.body.score+')', function (error, _, _) {
     if (error) throw error;
     console.log("Added score of "+req.body.nick+"("+req.body.score+")");
   })
