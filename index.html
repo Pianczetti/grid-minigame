@@ -6,26 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grid</title>
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body>
+  <div class="page-wrapper">
+  <div class="heading">
   <div class="set-num">
     <input id ="my-input" type="number">
     <label id="size-label">Set the size of grid</label>
     <button class="set-btn btn" disabled>Set</button>
   </div>
 
-  <div id="reset" style="display: none;"">
+  <div id="reset" style="display: none;">
     <button id="reset-button" class="btn">Reset</button>
   </div>
+</div>
   
-  <div class="grid-parent">
+  <div class="content">
     <div class="grid">
+    </div>
+  </div>
+</div>
+
+  <div class="modal-wrapper">
+    <div class="modal">
+
+        <div>
+          Your name: <input type="text" name="nickname" />
+          <br>
+          <button class="btn">Wyślij</button>
+        </div>
+
     </div>
   </div>
 
 
   <!-- <script src="elements.js"></script> -->
+  <script src="node_modules/jquery/dist/jquery.js"></script>
   <script src="script.js"></script>
  
 

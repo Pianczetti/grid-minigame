@@ -11,6 +11,8 @@ const resetButton = document.getElementById('reset-button');
 const reset = document.getElementById('reset');
 const sizeLabel = document.getElementById('size-label');
 const isZero = (currentValue) => currentValue === 0;
+const modalWrap = document.querySelector('.modal-wrapper');
+const pageWrap = document.querySelector('.page-wrapper');
 
 let fields;
 let fieldsArr;
@@ -22,27 +24,34 @@ let rowBorders = [];
 let sq;
 let board = [];
 let graph = {};
+let score = 0;
+let nickname = document.querySelector('input[name="nickname"]');
+let modalBtn = document.querySelector('.modal .btn')
+let nicknameVal = ""
+
 var addedGridCells = [];
-
-
 
 grid.style.gridTemplateColumns = `repeat(${length}, 1fr)`;
 grid.style.gridTemplateRows = `repeat(${length}, 1fr)`;
 
+nickname.addEventListener('input', e => { nicknameVal = e.target.value})
+modalBtn.addEventListener("click" , () => { 
+  addToRanking(score);
+  modalWrap.classList.toggle('open');
+  pageWrap.classList.toggle('blur'); 
+})
+
 sqInput.addEventListener('change', (e) => {
   length = e.target.value;
-  grid.style.gridTemplateColumns = `repeat(${length}, 1fr)`;
-  grid.style.gridTemplateRows = `repeat(${length}, 1fr)`;
-
-  if(length > 2 && length < 11)
-  {sizeLabel.innerHTML = `The size of grid: ${e.target.value}x${e.target.value}`}
-  else
-  {sizeLabel.innerHTML = `Set the size of grid`}
 
   if(length > 2 && length < 11){
-  setButton.removeAttribute('disabled');
+    sizeLabel.innerHTML = `The size of grid: ${e.target.value}x${e.target.value}`
+    setButton.removeAttribute('disabled');
+    grid.style.gridTemplateColumns = `repeat(${length}, 1fr)`;
+    grid.style.gridTemplateRows = `repeat(${length}, 1fr)`;
   }
   else{
+    sizeLabel.innerHTML = `Set the size of grid`
     setButton.setAttribute('disabled', 'disabled')
   }
 });
@@ -192,7 +201,9 @@ function setTarget() {
               else{
                 setTimeout(() => { 
                   if(board.every(isZero)) { 
-                    alert("No more moves"); 
+                      modalWrap.classList.toggle('open');
+                      pageWrap.classList.toggle('blur');
+
                     grid.style.display = 'none';
                     while (grid.firstChild) {
                       grid.removeChild(grid.lastChild);
@@ -201,7 +212,6 @@ function setTarget() {
                     setNum.style.display = 'flex';
                   } 
                 }, 0)
-                
               }
           }
       }
@@ -209,6 +219,13 @@ function setTarget() {
     })
   );
 }
+
+// function sendData(){ 
+//   const data = {
+//     name: ,
+
+//   }
+// }
 
 function checkRows(arr) {
   let helperArr = []
@@ -223,6 +240,7 @@ function checkRows(arr) {
         clearFields(fieldsArr[i + 2]);
         clearFields(fieldsArr[i + 3]);
         clearFields(fieldsArr[i + 4]);
+        score++;
         return true;   
       }
       if(arr[i + 3] === 1 && i % gridSize < gridSize - 3){
@@ -231,6 +249,7 @@ function checkRows(arr) {
         clearFields(fieldsArr[i + 1]);
         clearFields(fieldsArr[i + 2]);
         clearFields(fieldsArr[i + 3]);
+        score++;
         return true;
       }
       if(arr[i+2] === 1 && i % gridSize < gridSize - 2)
@@ -238,6 +257,7 @@ function checkRows(arr) {
         clearFields(fieldsArr[i]);
         clearFields(fieldsArr[i + 1]);
         clearFields(fieldsArr[i + 2]);
+        score++;
         return true;
       }
     }
@@ -249,6 +269,7 @@ function checkRows(arr) {
         clearFields(fieldsArr[i + 1]);
         clearFields(fieldsArr[i + 2]);
         clearFields(fieldsArr[i + 3]);
+        score++;
           return true;
         }
         if(arr[i+2] === 1 && i % gridSize < gridSize - 2){
@@ -256,6 +277,7 @@ function checkRows(arr) {
           clearFields(fieldsArr[i]);
           clearFields(fieldsArr[i + 1]);
           clearFields(fieldsArr[i + 2]);
+          score++;
           return true;
         }
       }
@@ -263,6 +285,7 @@ function checkRows(arr) {
           clearFields(fieldsArr[i]);
           clearFields(fieldsArr[i + 1]);
           clearFields(fieldsArr[i + 2]);
+          score++;
           return true;
       }
     }
@@ -501,17 +524,17 @@ function breadthFirstSearch(graph, start, end) {
 }
 
 
-
-// function resetGame() {
-//   const gridCells = document.querySelectorAll('.grid-cell');
-//   gridCells.forEach((cell) => {
-//     cell.classList.remove('mark', 'green', 'not-available-move', 'has-child');
-//     cell.innerHTML = '';
-//   });
-//   board = [];
-//   rowBorders = [];
-//   graph = {};
-//   addedGridCells = [];
-//   isMarkedElement = false;
-//   markedField = false;
-// }
+function addToRanking(score) {
+  // var result;
+  $.ajax({
+    async: false,
+    url: "/add-score",
+    type: "POST",
+    dataType: "json",
+    data: {nick: nicknameVal, score: score},
+    // success: function(data) {
+    //   result = data['data'];
+    // }
+  });
+  // return result;
+}
